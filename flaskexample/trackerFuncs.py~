@@ -1,0 +1,20 @@
+# trackerFuncs.py
+#
+# Functions for the Endomondo, Jawbone, and Loop data
+#
+# LKS June 2016, part of Insight Data Science Project
+#
+import numpy as np
+import tcxparser
+import os
+import glob
+from geopy.geocoders import Nominatim
+import webScrapeFunctions as WS
+import plottingFunctions as pf
+import datetime
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+import pandas as pd
+import matplotlib.pyplot as plt
+#
+#
+def 

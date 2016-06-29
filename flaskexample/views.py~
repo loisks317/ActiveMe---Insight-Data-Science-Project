@@ -1,0 +1,90 @@
+from flask import render_template
+from flaskexample import app
+from flask import request
+from sqlalchemy import create_engine
+from sqlalchemy_utils import database_exists, create_database
+import pandas as pd
+import psycopg2
+import numpy as np
+import trackerFuncs as TF
+
+#from flask import Flask
+#app = Flask(__name__, static_url_path = "tmp", static_folder = "tmp")
+
+#
+# try looking at app.show 
+@app.route('/')
+@app.route('/index')
+def index():
+    return render_template("index.html",
+       title = 'Home', user = { 'nickname': 'Miguel' },
+       )
+#
+# the forum
+#@app.route('/')
+#def my_form():
+#    return render_template("my-form.html")
+
+@app.route('/', methods=['POST'])
+def userNameForum():
+
+    text = request.form['name']
+    processed_text = text.upper()
+    return processed_text
+ 
+@app.route('/', methods=['POST'])
+def trackerForum():
+    text = request.form['tracker']
+    processed_text = text.upper()
+    return processed_text
+
+
+@app.route('/db')
+def db():
+   user = 'loisks'
+   user2=userNameForum()
+   user2='Jimmy'
+   trackerType=trackerForum()
+   #user2 = 'JIMMY' #add your username here (same as previous postgreSQL)
+   
+   activeList=['ActiveTime',  'Distance', 'Calories']
+   weatherList=['MeanTemperature', 'MaxTemperature', 
+           'MinTemperature','Precip', 'Wind']
+   activeLabels=['Active Time [s]','Distance [m]',  'Calories']
+   weatherLabels=['Average Temperature [F]', \
+           'Max Temperature [F]', 'Min Temperature [F]',\
+                  'Precipitation [inches]', \
+                  'Wind [mph]']
+   Parameters=activeList+weatherList
+   Labels=activeLabels+weatherLabels
+   
+   host = 'localhost'
+   if trackerType=='Endomondo':
+      dbname = 'tapiriik'
+      TF.endomondo(user2)
+      
+   db = create_engine('postgres://%s%s/%s'%(user,host,dbname))
+   con2 = None
+   con2 = psycopg2.connect(database=dbname, user=user)  
+   cur=con2.cursor()
+   cur.execute("SELECT * FROM "+user2)
+   #
+   # get all the data 
+   AllUserData=cur.fetchall()
+   #
+   # get the dates 
+   dates=pd.DatetimeIndex(np.swapaxes(AllUserData, 1,0)[0])
+   dataOnly=np.swapaxes(np.swapaxes(AllUserData,1,0)[1:],1,0)
+   df=pd.DataFrame(dataOnly, columns=Parameters)
+   caloriesBurned=''
+   for iCal in range(len(df['Calories'])):
+      caloriesBurned+=str(df['Calories'][iCal])
+      caloriesBurned+="<br>"
+   return(caloriesBurned)
+
+@app.route('/output')
+def output():
+    return render_template("output.html",
+       title = 'Home', user = { 'nickname': 'Miguel' },
+       )
+ 

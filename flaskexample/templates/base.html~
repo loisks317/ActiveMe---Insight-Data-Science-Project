@@ -1,0 +1,31 @@
+<html>
+  <head>
+    {% if title %}
+    <title>{{ title }} - ActiveMe</title>
+    {% else %}
+    <title>Welcome to ActiveMe</title>
+    {% endif %}
+  </head>
+  <body>
+    <div>ActiveMe: <a href="/index">Home</a></div>
+    <hr>
+    {% block content %}{% endblock %}
+  </body>
+
+
+<body>
+  <h1>Enter Username</h1>
+  <h1>Enter Activity Tracker Type</h1>
+    <h2>(it will be converted to uppercase)</h2>
+    <form action="." method="POST">
+      <input type="text" name="name">
+      <input type="text" name="tracker">        
+      <input type="submit" name="my-form" value="Send">
+    </form>
+</body>
+
+<img src="{{url_for('static', filename='001.png')}}" width="400" height="200">
+</html>
+
+
+
