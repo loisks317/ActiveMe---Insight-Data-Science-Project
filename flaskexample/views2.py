@@ -6,15 +6,15 @@ from sqlalchemy_utils import database_exists, create_database
 import pandas as pd
 import psycopg2
 import numpy as np
-import trackerFuncs as TF
+
 import os
 import datetime
 
 #from flask import Flask
-#app = Flask(__name__, static_url_path = "static", static_folder = "static")
-UPLOAD_FOLDER_RAW = '/Users/loisks/Documents/tmp/raw/'
-UPLOAD_FOLDER_EDIT = '/Users/loisks/Documents/tmp/edit/'
-ALLOWED_EXTENSIONS = set(['csv','CSV'])
+#app = Flask(__name__, static_url_path = "/root/Hosting/flaskexample/static", static_folder = "/root/Hosting/flaskexample/static")
+UPLOAD_FOLDER_RAW = '/root/tmp/raw/'
+UPLOAD_FOLDER_EDIT = '/root/tmp/edit/'
+ALLOWED_EXTENSIONS = set(['csv','CSV', 'tcx', 'TCX'])
 
 app.config['UPLOAD_RAW_DEST'] = UPLOAD_FOLDER_RAW
 app.config['UPLOAD_EDIT_DEST'] = UPLOAD_FOLDER_EDIT
@@ -29,8 +29,10 @@ def allowed_file(filename):
 @app.route('/')
 #@app.route('/index')
 def index():
-    return render_template("cesareans.html",
-       title = 'Home', user = { 'nickname': 'Miguel' },
+   import os
+   os.chdir('/root/Hosting/flaskexample') 
+   return render_template("cesareans.html",
+       title = 'Home', img1="/static/active_Lois.png", img2="static/active_Me_Logo.png",
        )
 #
 # the forum
@@ -39,66 +41,7 @@ def index():
 #    return render_template("my-form.html")
 
 
-
-
-#@app.route('/db')
-#def db():
-#   user = 'loisks'
-#   user2=userNameForum()
-#   user2='Jimmy'
-#   trackerType=trackerForum()
-#   #user2 = 'JIMMY' #add your username here (same as previous postgreSQL)
-#   
-#   activeList=['ActiveTime',  'Distance', 'Calories']
-#   weatherList=['MeanTemperature', 'MaxTemperature', 
-#           'MinTemperature','Precip', 'Wind']
-#   activeLabels=['Active Time [s]','Distance [m]',  'Calories']
-#   weatherLabels=['Average Temperature [F]', \
-#           'Max Temperature [F]', 'Min Temperature [F]',\
-#                  'Precipitation [inches]', \
-#                  'Wind [mph]']
-#   Parameters=activeList+weatherList
-#   Labels=activeLabels+weatherLabels
-#   
-#   host = 'localhost'
-#   if trackerType=='Endomondo':
-#      dbname = 'tapiriik'
-#      TF.endomondo(user2)
-#      
-#   db = create_engine('postgres://%s%s/%s'%(user,host,dbname))
-#   con2 = None
-#   con2 = psycopg2.connect(database=dbname, user=user)  
-#   cur=con2.cursor()
-#   cur.execute("SELECT * FROM "+user2)
-#   #
-#   # get all the data 
-#   AllUserData=cur.fetchall()
-#   #
-#   # get the dates 
-#   dates=pd.DatetimeIndex(np.swapaxes(AllUserData, 1,0)[0])
-#   dataOnly=np.swapaxes(np.swapaxes(AllUserData,1,0)[1:],1,0)
-#   df=pd.DataFrame(dataOnly, columns=Parameters)
-#   caloriesBurned=''
-#   for iCal in range(len(df['Calories'])):
-#      caloriesBurned+=str(df['Calories'][iCal])
-#      caloriesBurned+="<br>"
-#   return(caloriesBurned)
-
-#@app.route('/output')
-#def output():
-#    #
-#    # just try to print the csv file to screen
-#    
-#    csvFile = getData()
-#    csvConvert=np.genfromtxt(csvFile, delimiter=',')
-#    print('Yes!!!')
-#    
-#    return (render_template("output.html",
-#                            title = 'Home', user = { 'nickname': 'Miguel' }),
-#            csvConvert
-#    )
-
-@app.route('/output',methods=['POST'])
+@app.route('/output',methods=['POST', 'GET'])
 def output():
  #
  # man, this sucks
@@ -109,34 +52,37 @@ def output():
  username=request.form.get('Username')
  password=request.form.get('Password')
  location=request.form.get('Location')
- dateStart=request.form.get('StartDate')
- print("Date start is: " + str(dateStart))
- dateEnd=request.form.get('EndDate')
- dataModified=0 # for Jawbone file check           
+# dateStart=request.form.get('StartDate')
+# print("Date start is: " + str(dateStart))
+# dateEnd=request.form.get('EndDate')
+ dataModified=[] # for Jawbone file check           
  try:
     #
     # THIS GETS THE FILE. FLASK.
     #
-   file = request.files['file']
-   
-   if file and allowed_file(file.filename):
-       filename=file.filename
-       file.save(os.path.join(app.config['UPLOAD_RAW_DEST'],filename))
-       print filename
-       #        return redirect(url_for('report_match',filename=filename))
+   files = request.files.getlist('file[]')
+   print files
+   filenames=[]
+   for ifile in files:   
+     if ifile and allowed_file(ifile.filename):
+       filenames.append(ifile.filename)
+       ifile.save(os.path.join(app.config['UPLOAD_RAW_DEST'],ifile.filename))
+       print ifile.filename
+
    #get location of saved file
-   print( 'filename: ' + filename)
-   filepath = os.path.join(app.config['UPLOAD_RAW_DEST'],filename)
+   #print( 'filename: ' + filename)
+   filepath = os.path.join(app.config['UPLOAD_RAW_DEST'],filenames[0])
    print filepath
    print app.config['UPLOAD_RAW_DEST']
 
    if tracker=='Jawbone':
-       import glob
-       # then this is a csv file
-       os.chdir('/Users/loisks/Documents/tmp/raw')
-       # get the file
-       print("FILE NAME IS: " +str(filename))
-       ff=glob.glob(filename)[0]
+      import glob
+      # then this is a csv file
+      os.chdir('/root/tmp/raw')
+      # get the file
+      for ifile in range(len(filenames)):
+       print("FILE NAME IS: " +str(filenames[ifile]))
+       ff=glob.glob(filenames[ifile])[0]
        dataAll=np.swapaxes(np.genfromtxt(ff, delimiter=','), 1, 0)
       
        temp=[ datetime.datetime.strptime(str(int(dataAll[0][j])), \
@@ -166,14 +112,43 @@ def output():
        dataModified['SleepTime']+=list(dataAll[48])
        dataModified['Dates']+=list(np.array(time))
        #
+   if tracker=='Endomondo':
+       import glob
+       from geopy.geocoders import Nominatim	
+       import tcxparser
+       # then this is a tcx file
+       os.chdir('/root/tmp/raw')
+       # get the file
+       params=['Date', 'ActiveTime', 'Distance', 'Calories', 'Location']
+       dataModified={}
+       for iparam in params:
+	   dataModified[iparam]=[]
+       for ifile in range(len(filenames)):
+      		 print("FILE NAME IS: " +str(filenames[ifile]))
+       		 ff=glob.glob(filenames[ifile])[0]
+       		 startDate=ff[0:10]
+       		 tcx=tcxparser.TCXParser(ff)
+                 # get data
+                 workoutTime=tcx.duration
+                 latitude=str(tcx.latitude)
+                 longitude=str(tcx.longitude)
+                 timeStamp=tcx.completed_at
+                 try:
+                          distance=tcx.distance
+                 except:
+                          distance=1e-31
+                 calories=tcx.calories
+                 # turn lat and longitude into a city
+                 geolocator = Nominatim()
+                 location = (geolocator.reverse(latitude+','+longitude)).address
+                 # now have to adjust for the right dates
+		 print startDate
+                 dataModified['Date'].append(startDate )
+                 dataModified['Distance'].append(distance)
+                 dataModified['Calories'].append(calories)
+                 dataModified['ActiveTime'].append(workoutTime)
+                 dataModified['Location'].append(location)
 
-   elif tracker=='PolarLoop':
-      # this means get the Polar Loop Data
-      os.chdir('/Users/loisks/Documents/InsightProject/PolarLoop/')
-      import assimilateData as ASSD
-      ASSD.getData(username,password,dateStart,dateEnd)
-      # this *should* set up the data base and table with
-      # the username and password the user inputs
     
  except:
      print("no file uploaded")
@@ -181,20 +156,21 @@ def output():
 #
 # now load the relevant figures
 #
+ dateStart=0; dateEnd=0
  if tracker=='Jawbone':
          import readJawBone as PL 
-         data=PL.loadData(username, password, location, dateStart,\
+         data=PL.loadData(username, password, location,\
                            data=dataModified)
          
- elif tracker=='Polar Loop':         
-         import dataStats as PL
-         data=PL.loadData(username, password, location, instartDate=dateStart, \
-                          inendDate=dateEnd)
+# elif tracker=='Polar Loop':         
+#         import dataStats as PL
+#         data=PL.loadData(username, password, location, instartDate=dateStart, \
+#                          inendDate=dateEnd)
 #
 # Jimmy's data 
  elif tracker=='Endomondo':         
          import readTapiriik as PL
-         data=PL.loadData(username, password, location)
+         data=PL.loadData(username, password, location, dataModified=dataModified)
 
  dd=data[0]
  temp=data[0]*1.1
@@ -204,10 +180,15 @@ def output():
  weather=data[1]
 
  boxwhisker="/static/"+username+"/boxwhisker_Calories_daysofweek.png"
- scatter1="/static/"+username+"/seaborn_Calories_Wind_scatter.png.png"
- scatter2="/static/"+username+"/seaborn_Calories_MeanTemperature_scatter.png.png"
- scatter3="/static/"+username+"/seaborn_Calories_Precip_scatter.png.png"
- os.chdir('/Users/loisks/Documents/InsightProject/Hosting/flaskexample')
+ scatter1="/static/"+username+"/seaborn_Calories_Wind_scatter.png"
+ scatter2="/static/"+username+"/seaborn_Calories_MeanTemperature_scatter.png"
+ scatter3="/static/"+username+"/seaborn_Calories_Precip_scatter.png"
+ os.chdir('/root/Hosting/flaskexample')
+ import stat
+ os.chmod('/root/Hosting/flaskexample'+boxwhisker, 0o777)
+ os.chmod('/root/Hosting/flaskexample'+scatter1,0o777)
+ os.chmod('/root/Hosting/flaskexample'+scatter2,0o777)
+ os.chmod('/root/Hosting/flaskexample'+scatter3, 0o777)
  print(scatter1)
  
  return render_template("output.html", calories=cals, tracker=tracker, \

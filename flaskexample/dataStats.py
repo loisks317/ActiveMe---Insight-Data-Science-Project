@@ -13,6 +13,8 @@ import os
 import plottingFunctions as pf
 import webScrapeFunctions as WS
 import datetime
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+
 #
 # load in the data from the data base
 def loadData(username, password, location, instartDate=0, inendDate=0):
@@ -27,7 +29,8 @@ def loadData(username, password, location, instartDate=0, inendDate=0):
                               password='poppy33')
        # make it create individual data base
        dbname='polar'
-       
+       con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+           
        #
        # fetch the data
        

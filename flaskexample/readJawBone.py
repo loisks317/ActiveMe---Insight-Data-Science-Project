@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import psycopg2
 import sys
 
-def loadData(username, password,location,instartDate, data=0):
+def loadData(username, password,location, data=[]):
     #
     # the usual suspects for loading in data
     # data = the file to be added to the data base 
@@ -48,25 +48,35 @@ def loadData(username, password,location,instartDate, data=0):
         con2.rollback()
         con2 = psycopg2.connect("dbname='jawbone' user='loisks'")  
         cur=con2.cursor()
-        query2=" CREATE TABLE "+username+" (Date TIMESTAMP, Steps REAL, Distance REAL, Calories REAL, ActiveTime REAL, Sleep REAL,  meanTemperature REAL, maxTemperature REAL, minTemperature REAL,precipitation REAL, wind REAL); "
+        # just in case a data base is already there
+        #try:
+        #    qq="DROP TABLE " +username
+        #    cur.execute(qq)
+        #except:
+        #    print("didn't need to drop the table") 
+        query2=" CREATE TABLE "+tableName+" (Date TIMESTAMP, Steps REAL, Distance REAL, Calories REAL, ActiveTime REAL, Sleep REAL,  meanTemperature REAL, maxTemperature REAL, minTemperature REAL,precipitation REAL, wind REAL); "
+	print('MAKES IT TO CHECKPOINT #2 LO')
         cur.execute(query2)
         
     #
     # first test to see if there is a file
-    #print data
+    print data
     #stop
-    if data != 0:
+    if data != []:
         try:
             startDate=prevData[-1][0]+datetime.timedelta(days=1)
+            print("START DATE IS: " + str(startDate))
+            iStart=min(range(len(data['Dates'][1:])), key=lambda i: abs(data['Dates'][1:][i]-startDate))+1
+
         except:
-            print instartDate
-            startDate=datetime.datetime.strptime(instartDate, '%Y%m%d')
-        print("START DATE IS: " + str(startDate))
+	   print("First of year")
+           iStart=1
+#            print instartDate
+#            startDate=datetime.datetime.strptime(i, '%Y%m%d')
         # then there is a file to be added to the data base
         params=['Dates', 'Steps', 'Distance', 'Calories', 'ActiveTime', 'SleepTime']
     #
 
-        iStart=min(range(len(data['Dates'][1:])), key=lambda i: abs(data['Dates'][1:][i]-startDate))+1
         print iStart
 
         # correct for nans
@@ -99,7 +109,7 @@ def loadData(username, password,location,instartDate, data=0):
                 cur.execute(query,dataC)
                 con2.commit()
             except:
-                print("bad data")
+                print("bad data for " + str(curDate) )
                 
 
     Parameters=['Steps', 'Distance', 'Calories', \

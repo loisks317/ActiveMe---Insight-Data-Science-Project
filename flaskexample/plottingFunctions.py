@@ -100,8 +100,8 @@ class plotter():
                 np.array([float(self.df[self.weatherList[j]][i]) for i in \
                                range(len(self.df[self.weatherList[j]]))]), \
                 self.activeLabels[iP], self.weatherLabels[j], 1e100, 1, '', \
-                    '/Users/loisks/Documents/InsightProject/Hosting/flaskexample/static/'+self.tableName, self.activeList[iP]+'_'+\
-                     self.weatherList[j]+'_scatter.png')
+                    '/root/Hosting/flaskexample/static/'+self.tableName, self.activeList[iP]+'_'+\
+                     self.weatherList[j]+'_scatter')
                 corr=self.df[self.activeList[iP]].corr(self.df[self.weatherList[j]])
                 print('R = '+str(corr)+' for '+self.activeList[iP]+\
                       ' and '+self.weatherList[j])
@@ -131,10 +131,10 @@ class plotter():
                     self.statsScat(x[W],y[W], self.activeLabels[iParam], \
                                  self.weatherLabels[j],\
                                  1e100, 1, '', \
-                                 '/Users/loisks/Documents/InsightProject/Hosting/flaskexample/static/'+\
+                                 '/root/Hosting/flaskexample/static/'+\
                                    self.tableName, godDamnMondays[W]+'_'+ \
                                  self.activeList[iParam]+'_'+\
-                                 self.weatherList[j]+'_scatter.png')
+                                 self.weatherList[j]+'_scatter')
                     corr=x[W].corr(y[W])
                     print('For '+ godDamnMondays[W]+' R = '+str(corr)+' for '+\
                           self.activeList[iParam]+' and '+self.weatherList[j])
@@ -182,7 +182,7 @@ class plotter():
              #if not os.path.exists('statistics/SeaBorn'):
              #    os.umask(0) # unmask if necessary
              #    os.makedirs('statistics/SeaBorn') 
-             os.chdir('/Users/loisks/Documents/InsightProject/Hosting/flaskexample/static/'+self.tableName)
+             os.chdir('/root/Hosting/flaskexample/static/'+self.tableName)
              jp.savefig("seaborn_"+filename+".png")
              
              fig=plt.figure()
@@ -197,7 +197,7 @@ class plotter():
                  ax.set_xlim(xmin,xmax)
              plt.draw()
              #os.chdir(subdir)
-             os.chdir('/Users/loisks/Documents/InsightProject/Hosting/flaskexample/static/'+self.TableName)
+             os.chdir('/root/flaskexample/static/'+self.TableName)
              fig.savefig(filename+'.png')
              
         except:
@@ -224,7 +224,7 @@ class plotter():
            #    os.umask(0) # unmask if necessary
            #    os.makedirs(subdirName) 
            #os.chdir(subdirName)#
-           os.chdir('/Users/loisks/Documents/InsightProject/Hosting/flaskexample/static/'+self.tableName)
+           os.chdir('/root/Hosting/flaskexample/static/'+self.tableName)
            fig = ax.get_figure()
            fig.savefig('boxwhisker_'+self.Parameters[iParam]+'_daysofweek.png')
 
@@ -253,7 +253,7 @@ class plotter():
         #       os.umask(0) # unmask if necessary
         #       os.makedirs(subdirName) 
         #os.chdir(subdirName)#
-        os.chdir('/Users/loisks/Documents/InsightProject/Hosting/flaskexample/static/'+self.tableName)
+        os.chdir('/root/Hosting/flaskexample/static/'+self.tableName)
         fig.savefig(saveFile+'.png')
         #os.chdir('..'); os.chdir('..')
         return(None)
@@ -435,7 +435,7 @@ class plotter():
         self.color=color
         self.nn=nn
         
-        subdir='/Users/loisks/Documents/InsightProject/Hosting/flaskexample/static/'+self.tableName
+        subdir='/root/Hosting/flaskexample/static/'+self.tableName
         if not os.path.exists(subdir):
             os.umask(0) # unmask if necessary
             os.makedirs(subdir) 
@@ -455,6 +455,6 @@ class plotter():
         #with open(self.tableName+'_dates.p', 'wb') as file: 
         #        pickle.dump(self.dates, file)
                 
-        os.chdir('/Users/loisks/Documents/InsightProject/Hosting/flaskexample')
+        os.chdir('/root/Hosting/flaskexample')
         #print (np.nanmedian(self.df['calories']))
         return(None)

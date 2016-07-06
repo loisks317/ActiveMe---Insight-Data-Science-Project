@@ -11,11 +11,12 @@
 
     <title>ActiveMe</title>
 
-    <!-- Bootstrap core CSS -->
-    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
-
+    <!-- Bootstrap core CSS 
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css"
+      rel="stylesheet">
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="../static/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+<!--    <link href="/static/css/ie10-viewport-bug-workaround.css" rel="stylesheet"> -->
 
     <!-- Custom styles for this template -->
     <link href="starter-template.css" rel="stylesheet">
@@ -47,8 +48,8 @@
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+<!--             <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li> --> 
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -61,28 +62,27 @@
 	<br>
 	<br>
 	 <div class="col-md-2 col-md-offset-2"></div>
-	  <img src= "/static/activeMeLogo.png" width="270" height="140">
+	  <img src="https://s31.postimg.org/5a127mpyj/active_Me_Logo.png“" width="270" height="140"> 
 	</div>
 	
 	  
 <!--        <h1>  Welcome to <u class="text-template">Active</u> <u class="text-primary">Me </u>!</h1> --> 
 
-		<div class="pull-right"><img src= "/static/activeLois.png" width="225" height="300"></div>
+		<div class="pull-right"><img src="https://s31.postimg.org/6bp6w5auz/active_Lois.png"" width="225" height="300"></div>
 	
-        <h4> ActiveMe is a cross platform fitness tracker analyzer that works for <u class="text-success">Jawbone</u>, <u class="text-info">PolarLoop</u>, and <u class="text-warning"> Endomondo </u> data. Find out how day of week, sleep, temperature, precipitation, and wind affect you! </h4>
+        <h4> ActiveMe is a cross platform fitness tracker analyzer that works for <u class="text-success">Jawbone</u> and <u class="text-warning"> Endomondo </u> data. Find out how day of week, temperature, precipitation, and wind affect you! </h4>
 
-	<br>
 	<br> 
 
 	
 
-	<h4> If this is your  <u class="text-danger">first time </u> or you want to update your data base, please either fill out the dates (Polar Loop) or upload an appropriate file (Jawbone/Endomondo) .</h4>
+	<h4> If this is your  <u class="text-danger">first time </u> or you want to update your data base, please upload an appropriate file (Jawbone/Endomondo) .</h4>
 	
 
 
 	<br>
 	<h4>
-	  If you just want a <u class="text-danger"> daily prediction </u> based on the data you already have submitted, just enter your username, password, and your current location! </h4>
+	  If you just want a <u class="text-danger"> daily prediction </u> based on the data you already have submitted, just enter your username, password, and your current location! If you want to see how it works, but you have no data, try using username:rachael, password:poppy33, and platform:jawbone  </h4>
 
 </div>
 
@@ -105,7 +105,7 @@
   <h5 class="text">    Select the Type of Tracker: </h5>
 		    <select name="Tracker">
 		      <option value="Jawbone">Jawbone</option>
-		      <option value="Polar Loop">Polar Loop</option>        
+<!--		      <option value="Polar Loop">Polar Loop</option> -->      
 		      <option value="Endomondo">Endomondo</option>
 		    </select>
  </div> 		 
@@ -116,9 +116,9 @@
 <div class="row">
  <div class="col-xs-3 col-xs-offset-1">
   <h5> Password: </h5>
-  <input  id="Password" type="text" name="Password">
+  <input  id="Password" type="password" name="Password">
  </div>
- <div class="col-xs-3 ">
+ <!-- <div class="col-xs-3 ">
    <h5> Start Date (for adding data!): </h5>
 
     <input  id="StartDate" type="text" name="StartDate">
@@ -129,14 +129,15 @@
     <input  id="EndDate" type="text" name="EndDate">
   </div>
 </div>
-
-<div class="col-xs-3 col-xs-offset-1">
-               <br>
+-->
+<div class="col-xs-3 col-xs-offset-4.5">
+           <br>
                <h5> Upload a .csv file for Jawbone Data </h5>
+	       <h5> or a .tcx file for Endomondo Data </h5>
                
-		  	      <p><input type=file name=file>
+		  	      <p><input type=file name='file[]' multiple>
 		          <br>
-		          <input type=submit value="Submit" name="submit_file" id="submit_file">
+		         <input type=submit value="Submit" name="submit_file" id="submit_file">
             </p>
 
 
